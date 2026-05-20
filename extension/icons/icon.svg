@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#2d3641"/>
+      <stop offset="100%" stop-color="#1a1f24"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fd6c0"/>
+      <stop offset="100%" stop-color="#4a9d85"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 圆角方形底 -->
+  <rect x="4" y="4" width="120" height="120" rx="26" ry="26" fill="url(#bg)"/>
+
+  <!-- 装饰圆环 -->
+  <circle cx="64" cy="64" r="46" fill="none" stroke="#6fb6a3" stroke-opacity="0.15" stroke-width="2"/>
+
+  <!-- 树枝 -->
+  <path d="M 22 90 Q 50 60 100 50" fill="none" stroke="#c9a96e" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 22 90 L 22 100" stroke="#c9a96e" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 小叶（嘴里衔的） -->
+  <path d="M 96 38 Q 108 30 116 36 Q 110 44 96 38 Z" fill="url(#leaf)"/>
+  <path d="M 100 39 L 108 35" stroke="#2d3641" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- 鸟身 -->
+  <ellipse cx="80" cy="56" rx="14" ry="11" fill="#6fb6a3"/>
+  <!-- 鸟尾 -->
+  <path d="M 66 58 L 56 64 L 66 64 Z" fill="#5a9888"/>
+  <!-- 鸟头 -->
+  <circle cx="92" cy="50" r="8" fill="#7fc4b1"/>
+  <!-- 喙 -->
+  <path d="M 99 50 L 105 48 L 99 52 Z" fill="#c9a96e"/>
+  <!-- 眼睛 -->
+  <circle cx="94" cy="48" r="1.4" fill="#1a1f24"/>
+
+  <!-- 翅膀 -->
+  <path d="M 78 54 Q 84 46 92 52 Q 84 60 78 54 Z" fill="#5a9888"/>
+</svg>

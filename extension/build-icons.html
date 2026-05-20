@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>S-TabClean · 图标生成器</title>
+<style>
+  body { font-family: 'PingFang SC', system-ui, sans-serif; background: #1a1f24; color: #e6e8eb; padding: 40px; text-align: center; }
+  h1 { font-weight: 500; margin-bottom: 6px; }
+  p  { color: #aab2bb; margin-bottom: 24px; }
+  .grid { display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
+  .item { background: #262e36; padding: 16px 20px; border-radius: 12px; }
+  canvas { display: block; image-rendering: pixelated; margin-bottom: 8px; border: 1px solid #313b46; background: #1a1f24; }
+  button { background: #6fb6a3; color: #1a1f24; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; }
+  button:hover { filter: brightness(1.1); }
+  .tip { font-size: 13px; color: #8a8278; margin-top: 12px; line-height: 1.7; }
+  code { background: #313b46; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+  <h1>🐦 S-TabClean 图标生成器</h1>
+  <p>点击下方按钮，把 SVG 渲染为 16/48/128 三个尺寸的 PNG 并下载。</p>
+
+  <div class="grid">
+    <div class="item"><canvas id="c16"  width="16"  height="16"></canvas><div>16×16</div></div>
+    <div class="item"><canvas id="c48"  width="48"  height="48"></canvas><div>48×48</div></div>
+    <div class="item"><canvas id="c128" width="128" height="128"></canvas><div>128×128</div></div>
+  </div>
+
+  <button onclick="downloadAll()">下载三张 PNG</button>
+
+  <div class="tip">
+    把下载到的 <code>icon16.png</code> / <code>icon48.png</code> / <code>icon128.png</code> 放进
+    <code>extension/icons/</code> 目录后，到 <code>chrome://extensions</code> 点击"重新加载"即可。
+  </div>
+
+<script>
+const SVG_URL = 'icons/icon.svg';
+
+async function loadSvgImage() {
+  const res = await fetch(SVG_URL);
+  const text = await res.text();
+  const blob = new Blob([text], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  await new Promise((ok, ng) => { img.onload = ok; img.onerror = ng; img.src = url; });
+  return img;
+}
+
+async function paint() {
+  const img = await loadSvgImage();
+  for (const size of [16, 48, 128]) {
+    const canvas = document.getElementById('c' + size);
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.clearRect(0, 0, size, size);
+    ctx.drawImage(img, 0, 0, size, size);
+  }
+}
+
+function downloadAll() {
+  for (const size of [16, 48, 128]) {
+    const canvas = document.getElementById('c' + size);
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `icon${size}.png`;
+      a.click();
+    }, 'image/png');
+  }
+}
+
+paint();
+</script>
+</body>
+</html>

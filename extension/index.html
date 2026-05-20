@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-TabClean · 标签工坊</title>
+
+  <!-- 字体：思源宋体（标题）+ Inter（正文） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="ink">
+
+<div class="app-shell">
+
+  <!-- ==================== 顶栏 ==================== -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 22 C 10 14, 18 10, 26 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="22" cy="13" r="2.2" fill="currentColor"/>
+        <path d="M24 12 L 28 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M6 22 L 6 26" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <h1>S-TabClean</h1>
+        <p id="brandTagline">让标签像图书馆一样井然有序</p>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="ghost-btn" id="snapshotBtn" title="为当前所有标签拍一张快照">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        快照
+      </button>
+      <button class="ghost-btn danger-btn" id="closeAllBtn" title="关闭所有标签（保留当前页）">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/></svg>
+        全部关闭
+      </button>
+      <a class="ghost-btn icon-only" id="githubBtn"
+         href="https://github.com/lisiyuan0828/S-TabClean"
+         target="_blank" rel="noopener noreferrer"
+         title="在 GitHub 上查看源码">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56 0-.27-.01-1-.02-1.96-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.97.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.06 11.06 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.76.11 3.05.74.8 1.18 1.82 1.18 3.08 0 4.42-2.69 5.4-5.26 5.68.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+        </svg>
+      </a>
+      <button class="ghost-btn icon-only" id="themeBtn" title="切换主题">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3a9 9 0 1 0 9 9c-2.5 0-4.5-2-4.5-4.5S15 3 12 3z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== 概览·心情指示 ==================== -->
+  <section class="mood-strip" id="moodStrip">
+    <div class="mood-card">
+      <div class="mood-num" id="statTotal">—</div>
+      <div class="mood-label">当前标签</div>
+    </div>
+    <div class="mood-card">
+      <div class="mood-num" id="statStale">—</div>
+      <div class="mood-label">已冷却 ≥ 24h</div>
+    </div>
+    <div class="mood-card">
+      <div class="mood-num" id="statDup">—</div>
+      <div class="mood-label">疑似重复</div>
+    </div>
+    <div class="mood-card">
+      <div class="mood-num" id="statActive">—</div>
+      <div class="mood-label">活跃</div>
+    </div>
+  </section>
+
+  <!-- ==================== 主内容：标签瀑布流 ==================== -->
+  <main class="main-area">
+
+    <!-- 标签筛选条 -->
+    <div class="filter-row" id="filterRow">
+      <div class="filter-chip active" data-filter="all">全部</div>
+      <div class="filter-chip" data-filter="stale">冷却中</div>
+      <div class="filter-chip" data-filter="dup">重复</div>
+      <div class="filter-chip" data-filter="active">活跃</div>
+      <div class="filter-divider"></div>
+      <!-- 智能标签（动态注入） -->
+      <div class="auto-tags" id="autoTags"></div>
+    </div>
+
+    <!-- 标签分组容器（瀑布流） -->
+    <div class="groups" id="groups"></div>
+
+    <!-- 空状态 -->
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-art">⛅</div>
+      <div class="empty-title">这里很安静</div>
+      <div class="empty-sub">没有标签匹配当前筛选。</div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ==================== 命令栏（默认隐藏） ==================== -->
+<div class="palette-mask" id="paletteMask">
+  <div class="palette" role="dialog" aria-label="命令栏">
+    <input type="text" id="paletteInput" placeholder="输入关键词跳转 / 关闭 / 标记标签…" autofocus>
+    <ul class="palette-list" id="paletteList"></ul>
+    <div class="palette-foot">
+      <kbd>↑↓</kbd> 移动 &nbsp; <kbd>Enter</kbd> 跳转 &nbsp; <kbd>⌘+Backspace</kbd> 关闭 &nbsp; <kbd>Esc</kbd> 退出
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 快照抽屉（点击顶部「快照」按钮唤起） ==================== -->
+<div class="drawer-mask" id="snapshotDrawer">
+  <aside class="drawer" role="dialog" aria-label="会话快照">
+    <header class="drawer-head">
+      <div>
+        <h3>📚 会话快照</h3>
+        <p class="drawer-sub">把当前所有标签存档，未来一键召回</p>
+      </div>
+      <button class="drawer-close" id="drawerCloseBtn" title="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18 18 6"/></svg>
+      </button>
+    </header>
+
+    <div class="drawer-action">
+      <button class="btn-primary" id="newSnapshotBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+        保存当前会话（<span id="snapshotTabCount">0</span> 个标签）
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="snapshot-list" id="snapshotList"></div>
+      <div class="snapshot-empty" id="snapshotEmpty">尚未保存任何快照</div>
+    </div>
+  </aside>
+</div>
+
+<!-- ==================== 快照命名弹层 ==================== -->
+<div class="modal-mask" id="snapshotModal">
+  <div class="modal">
+    <h3>保存当前会话为快照</h3>
+    <p class="modal-sub">将记录所有 <span id="snapshotPreviewCount">0</span> 个标签</p>
+    <input type="text" id="snapshotName" placeholder="给这次快照起个名字，比如 周三调研">
+    <div class="modal-actions">
+      <button class="btn-ghost" data-action="cancel-snapshot">取消</button>
+      <button class="btn-primary" data-action="confirm-snapshot">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 全部关闭确认弹层 ==================== -->
+<div class="modal-mask" id="closeAllModal">
+  <div class="modal">
+    <h3>关闭所有标签？</h3>
+    <p class="modal-sub">即将关闭 <span id="closeAllCount">0</span> 个标签，当前页面会保留。此操作不可撤销。</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" data-action="cancel-close-all">取消</button>
+      <button class="btn-danger" data-action="confirm-close-all">确认关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 提示气泡 ==================== -->
+<div class="toast" id="toast"></div>
+
+<!-- 删除时的水墨晕开层（动画用） -->
+<canvas id="inkCanvas"></canvas>
+
+<script src="app.js"></script>
+</body>
+</html>

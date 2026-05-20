@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "S-TabClean",
+  "version": "0.1.0",
+  "description": "井然有序的标签管理工坊：智能标签、时间衰减提醒、会话快照与命令栏，让浏览器标签像图书馆一样整洁。",
+  "permissions": ["tabs", "storage", "windows"],
+  "chrome_url_overrides": { "newtab": "index.html" },
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_title": "S-TabClean",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "open-command-palette": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "打开 S-TabClean 命令栏"
+    }
+  }
+}
